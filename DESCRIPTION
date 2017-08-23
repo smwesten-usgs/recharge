@@ -1,0 +1,24 @@
+Package: recharge
+Type: Package
+Title: Estimating Recharge with HYSEP, PART, and Recursive Digital Filter methods.
+Version: 0.1.0
+Authors@R: c(person("Steve", "Westenbroek", role = c("aut","cre"), email = "smwesten@usgs.gov"),
+             person("David", "Lorenz", role = c("aut") ),
+             person("Laura", "De Cicco", role = "ctb") )
+Description: This package contains R implementations of several commonly used recharge estimation algorithms.
+License: CC0
+Encoding: UTF-8
+LazyData: true
+Imports:
+  dataRetrieval,
+  dplyr
+Collate:
+  'recharge-package.R'
+  'get_os.R'
+  'hysep.R'
+  'bfi.R'
+  'rora.R'
+  'part.R'
+  'recess.R'
+RoxygenNote: 6.0.1
+Suggests: testthat

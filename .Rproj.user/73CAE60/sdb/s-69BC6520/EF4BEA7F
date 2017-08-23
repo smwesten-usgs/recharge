@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "Package: recharge\nType: Package\nTitle: Estimating Recharge with HYSEP, PART, and Recursive Digital Filter methods.\nVersion: 0.1.0\nAuthors@R: c(person(\"Steve\", \"Westenbroek\", role = c(\"aut\",\"cre\"),\n    email = \"smwesten@usgs.gov\"),person(\"David\", \"Lorenz\", role = c(\"aut\") ) )\nDescription: This package contains R implementations of several commonly used recharge estimation algorithms.\nLicense: CC0\nEncoding: UTF-8\nLazyData: true\nImports: \n  dataRetrieval,\n  dplyr\nCollate:\n  'recharge-package.R'\n  'get_os.R'\n  'hysep.R'\n\n",
+    "created" : 1503505597787.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4056571732",
+    "id" : "EF4BEA7F",
+    "lastKnownWriteTime" : 1503507367,
+    "last_content_update" : 1503507367909,
+    "path" : "/Volumes/smwesten/Source_Code/recharge/DESCRIPTION",
+    "project_path" : "DESCRIPTION",
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "dcf"
+}
