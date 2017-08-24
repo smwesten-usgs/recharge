@@ -1,4 +1,4 @@
-#' Estimate recharge by means of hydrograp recession displacement (RORA)
+#' Estimate recharge by means of hydrograph recession displacement (RORA)
 #'
 #' Estimate recharge by the method of hydrograph recession displacement.
 #'
@@ -107,6 +107,13 @@ rora <- function(date, discharge, da, recessIndex,
   length(retval$year) <- Npeaks
   length(retval$month) <- Npeaks
   length(retval$day) <- Npeaks
+
+  retval$peakdate <- lubridate::ymd(paste(retval$year,retval$month,retval$day,sep="-") )
+  retval$delta_t <- numeric( Npeaks )
+  retval$delta_t[ 2:Npeaks ] <- as.numeric( retval$peakdate[2:Npeaks] - retval$peakdate[1:Npeaks-1])
+  retval$delta_1[1] <- retval$peakdate[1] - date[1]
+  retval$baseflow_cfs <- retval$rech / retval$delta_t / 12. * da * 27878400. / 86400.
+
   if(!is.null(STAID))
     retval$STAID <- STAID
   oldClass(retval) <- "rora"

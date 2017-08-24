@@ -2,13 +2,13 @@
 #'
 #' Identify surface-water recessions
 #'
-#' Note that zero flows are set to a value so the the common log is -2.5 in order to 
+#' Note that zero flows are set to a value so the the common log is -2.5 in order to
 #'easily process recessions that go to 0 flow.
 #'
 #' The scaled RMSE of the recession regression is the root-mean-squared error divided
-#'by the square root of the recession index. Large values of the scaled RMSE indicate 
+#'by the square root of the recession index. Large values of the scaled RMSE indicate
 #'a lack of linearity, so \code{check.srmse} can be used as a filter to remove poor fits,
-#'but at some risk of rejecting acceptable recessions. The default value of 0.1, seems 
+#'but at some risk of rejecting acceptable recessions. The default value of 0.1, seems
 #'to be provide good balance of rejection for poor fits and acceptance of good fits.
 #'
 #' @param Flow the streamflow data to be analyzed. Missing values are not permitted
@@ -37,15 +37,15 @@
 #'with(ChoptankFlow, recess(Flow, datetime, STAID="0191000"))
 #'}
 #' @export
-recess <- function(Flow, Dates, Start=NULL, End=NULL, by=NULL, 
-                   min.duration=10, max.duration=300, 
+recess <- function(Flow, Dates, Start=NULL, End=NULL, by=NULL,
+                   min.duration=10, max.duration=300,
 									 check.srmse=0.1, STAID="Unknown") {
   ## Coding history:
   ##    2006May18 DLLorenz Initial coding.
   ##    2006Jul24 DLLorenz Added recess function to create a recess object
   ##    2006Jul26 DLLorenz Various enhancements
   ##    2006Jul27 DLLorenz Refinements to better agree with the original
-  ##    2006Sep08 DLLorenz Standardization, and rename to recess2, as per 
+  ##    2006Sep08 DLLorenz Standardization, and rename to recess2, as per
   ##                       suggestion of Al Rutledge.
   ##    2006Sep13 DLLorenz Bug fix
   ##    2008May20 DLLorenz remove NAs from data set
@@ -57,12 +57,13 @@ recess <- function(Flow, Dates, Start=NULL, End=NULL, by=NULL,
     ## Select the starting and ending value of sequences longer than a
     ## specified minimum
     NR <- length(x)
-    if(NR < minseq) 
-      return(NULL)		
+    if(NR < minseq)
+      return(NULL)
     if(seqno[1L] == 0)
       return(NULL)
     return(c(Start=x[1L], End=x[NR], Length=NR))
   }
+
   recessSel <- function(x, rec, dur) {
     x2 <- seq(along=x)
     x2 <- tapply(x2, rec, function(y, x, rec, dur) eventSel(x[y], rec[y], dur), x=x, rec=rec, dur=dur)
@@ -110,15 +111,16 @@ recess <- function(Flow, Dates, Start=NULL, End=NULL, by=NULL,
   Date <- as.Date(rep(NA, length(Index)))
   SRMSE <- double(length(Index))
   keep <- rep(TRUE, length(Index))
+
   ## From basic structure of recessions assume that only contiguous points used
   First <- Last <- integer(length(Index))
   for(i in seq(along=Index)) {
     rec <- log10(Flow[Recess == Index[i]])
     Time <- seq(Len[i])
     Date[i] <- Dates[Recess == Index[i]][1L]
-    ## Test if month in selected months and flows not all equal and length 
+    ## Test if month in selected months and flows not all equal and length
     ## less than max.duration
-    if(months(Date[i], abbreviate=TRUE) %in% months2Sel && 
+    if(months(Date[i], abbreviate=TRUE) %in% months2Sel &&
     	 	diff(range(Flow)) > 0.001 && Len[i] <= max.duration) {
       ## Use robust regression to identify the most linear part of the recession
       ## Trap flat lines

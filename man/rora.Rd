@@ -2,7 +2,7 @@
 % Please edit documentation in R/rora.R
 \name{rora}
 \alias{rora}
-\title{Estimate recharge by means of hydrograp recession displacement (RORA)}
+\title{Estimate recharge by means of hydrograph recession displacement (RORA)}
 \usage{
 rora(date, discharge, da, recessIndex, minimum_discharge = 0.01,
   incAnteRec = 0, STAID = NULL)

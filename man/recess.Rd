@@ -40,13 +40,13 @@ frame of the recession information, and other information about the analysis.
 Identify surface-water recessions
 }
 \details{
-Note that zero flows are set to a value so the the common log is -2.5 in order to 
+Note that zero flows are set to a value so the the common log is -2.5 in order to
 easily process recessions that go to 0 flow.
 
 The scaled RMSE of the recession regression is the root-mean-squared error divided
-by the square root of the recession index. Large values of the scaled RMSE indicate 
+by the square root of the recession index. Large values of the scaled RMSE indicate
 a lack of linearity, so \code{check.srmse} can be used as a filter to remove poor fits,
-but at some risk of rejecting acceptable recessions. The default value of 0.1, seems 
+but at some risk of rejecting acceptable recessions. The default value of 0.1, seems
 to be provide good balance of rejection for poor fits and acceptance of good fits.
 }
 \examples{
