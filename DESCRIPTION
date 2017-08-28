@@ -11,7 +11,8 @@ Encoding: UTF-8
 LazyData: true
 Imports:
   dataRetrieval,
-  dplyr
+  dplyr,
+  lubridate
 Collate:
   'recharge-package.R'
   'get_os.R'
@@ -21,5 +22,11 @@ Collate:
   'part.R'
   'recess.R'
   'eventProcessing.R'
+  'Eckhardt_digital_filter.R'
+  'chemical_mass_balance.R'
+  'cfs_to_recharge.R'
+  'plot_flow_conc.R'
+  'clean_dataframe.R'
+  'shiftData.R'
 RoxygenNote: 6.0.1
 Suggests: testthat

@@ -16,7 +16,7 @@
 #'baseflow in the output dataset. Must be one of "sliding," "local minimum,"
 #'or "fixed." Onle the first letter is required.
 #' @param STAID the station identifier for the data.
-#' @references Sloto, R.A. and Crouse, M.Y., 1996, HYSEP: 
+#' @references Sloto, R.A. and Crouse, M.Y., 1996, HYSEP:
 #'A COMPUTER PROGRAM FOR STREAMFLOW HYDROGRAPH SEPARATION AND ANALYSIS:
 #'U.S. geological Survey Water-Resources Investigations
 #'Report 96-4040. 46 p.
@@ -36,39 +36,29 @@
 #'ChopPart
 #'}
 #'@export
-hysep <- function(Flow, Dates, Start=NULL, End=NULL, da,
-                 select="sliding", STAID="Unknown") {
+bf_hysep <- function(date, discharge, da,
+                     select="sliding", STAID="Unknown") {
   ## Start of code: initial processing
   STAID <- as.character(STAID[1L])
-  if(is.null(Start))
-    Start <- Dates[1L]
-  else if(is.character(Start))
-    Start <- as.Date(Start)
-  if(is.null(End))
-    End <- Dates[length(Dates)]
-  else if(is.character(End))
-    End <- as.Date(End)
-  sel <- (Dates >= Start) & (Dates <= End)
-  Dates <- Dates[sel]
-  Flow <- pmax(Flow[sel], 1e-99) # Convert 0 to a small number
-  if(any(is.na(Flow)))
-    stop("Missing values between ", Start, " and ", End)
-  if(any(diff(as.double(Dates)) != 1))
-    stop("Date data are not continuous between Start and End")
+  discharge <- pmax(discharge, 0.000001) # Convert 0 to a small number
+  if(any(is.na(discharge)))
+    stop("Missing discharge values." )
+  if(any(diff(as.double(date)) != 1))
+    stop("Date data are not continuous.")
   select <- match.arg(select, c("sliding", "local minimum", "fixed"))
   Nact <- max(da^0.2, 1)
   N2star <- max((((2*Nact) ) %/% 2)*2 + 1, 3)
   ## Set up for fixed--construct intervals of length N2star
-  Nobs <- length(Flow)
+  Nobs <- length(discharge)
   Ngrp <- ceiling(Nobs / N2star)
   Grps <- inverse.rle(list(lengths=rep(N2star, Ngrp), values=seq(Ngrp)))
   length(Grps) <- Nobs # Truncate if necessary
   ## Compute the fixed method
-  Mins <- tapply(Flow, Grps, min)
+  Mins <- tapply(discharge, Grps, min)
   Fixed <- Mins[as.character(Grps)]
   ## Now the sliding method
   Slide <- sapply(seq(N2star, Nobs), function(i)
-    min(Flow[seq(i - N2star + 1L, i)])
+    min(discharge[seq(i - N2star + 1L, i)])
   )
   SlB <- Slide[1L]
   SlE <- Slide[length(Slide)]
@@ -77,25 +67,25 @@ hysep <- function(Flow, Dates, Start=NULL, End=NULL, da,
   ## And the local minimum
   Mid <- as.integer((N2star) / 2)
   LocMin <- sapply(seq(N2star, Nobs), function(i)
-    min(Flow[seq(i - N2star + 1L, i)]) == Flow[i - Mid]
+    min(discharge[seq(i - N2star + 1L, i)]) == discharge[i - Mid]
   )
   LocMin <- c(rep(FALSE, Nfil), LocMin, rep(FALSE, Nfil))
   ## Need to trap short periods where only 1 local minimum
   if(sum(LocMin) == 1L) {
     warning("Only one local minimum in calibration period")
-    LocMin <- pmax(Flow[LocMin], 0.01)
+    LocMin <- pmax(discharge[LocMin], 0.01)
   } else
-    LocMin <- exp(approx(which(LocMin), log(pmax(Flow[LocMin], 0.01)), xout=seq(Nobs), rule=2)$y)
-  LocMin <- pmin(Flow, LocMin) # recover 0s and tails
+    LocMin <- exp(approx(which(LocMin), log(pmax(discharge[LocMin], 0.01)), xout=seq(Nobs), rule=2)$y)
+  LocMin <- pmin(discharge, LocMin) # recover 0s and tails
   if(select == "fixed")
     BaseQ <- Fixed
   else if(select == "sliding")
     BaseQ <- Slide
-  else 
+  else
     BaseQ <- LocMin
-  retval <- data.frame(Dates=Dates, BaseQ=round(BaseQ, 3L), 
-                       Flow=Flow, Fixed=Fixed, Sliding=Slide, 
-                       LocalMin=LocMin)
+  retval <- data.frame(date=date, baseflow=round(BaseQ, 3L),
+                       discharge=discharge, fixed=Fixed, sliding=Slide,
+                       local_min=LocMin)
   if(!is.null(STAID))
     attr(retval, "STAID") <- STAID
   attr(retval, "type") <- "hysep"

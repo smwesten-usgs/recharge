@@ -9,6 +9,7 @@
 #' Specifically, this code is designed to return the proper operating
 #' system name even if the R function 'Sys.info' is unimplemented.
 #'
+#'@export
 get_os <- function(){
   sysinf <- Sys.info()
   if (!is.null(sysinf)){

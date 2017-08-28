@@ -1,18 +1,16 @@
-#' Baseflow Separation by use of an Eckhardt Filter
+#' Baseflow Separation by use of a chemical mass balance
 #'
-#' Extract baseflow from a daily streamflow record using the method described by
-#'Eckhardt (2005).
+#' Extract baseflow from a daily streamflow record using conductance or other continuously
+#' monitored conservative chemicals as markers of baseflow and surface flow.
 #'
 #' @param date vector of dates corresponding to each \code{discharge}, should be of class "Date."
 #' Missing values are not permitted.
 #' @param discharge the daily streamflow to be separated missing values are not permitted
-#'within the time specified by \code{Start} and \code{end}.
-#' @param BFImax maximum BFI to use in the filtering.
-#' @param alpha filter parameter.
+#' @param C daily chemical concentration values
+#' @param C_baseflow assumed chemical concentration associated with water derived from baseflow
+#' @param C_runoff assumed chemical concentration associated with water deriver from surface flow
 #' @param STAID the station identifier for the data.
-#' @references Eckhardt, K., 2005, How to construct recursive digital filters for
-#'  baseflow separation: Hydrological Processes, v. 19, no. 2, p. 507–515.
-#'
+#' @references
 #' @return an object of class "baseflow" and inherits class "data.frame" of the selected data,
 #'a data frame of the baseflow information, and other information about the analysis.
 #'
@@ -22,13 +20,18 @@
 #'\dontrun{
 #'}
 #'@export
-bf_eckhardt_filter <- function(date, discharge, BFImax, alpha, STAID="Unknown") {
+bf_chem_mass_balance <- function(date, discharge, C,
+                                 C_baseflow=max(C),
+                                 C_runoff=min(C),
+                                 STAID="Unknown") {
 
     ## Start of code: initial processing
   STAID <- as.character(STAID[1L])
   discharge <- pmax(discharge, 0.000001 ) # Convert 0 to a small number
   if(any(is.na(discharge)))
     stop("Missing values in discharge vector.")
+  if(any(is.na(C)))
+    stop("Missing values in chemical concentration vector.")
   if(any(diff(as.double(date)) != 1))
     stop("Date data are not continuous.")
 
@@ -37,14 +40,11 @@ bf_eckhardt_filter <- function(date, discharge, BFImax, alpha, STAID="Unknown") 
   baseflow  <- numeric( n )
   quickflow <- numeric( n )
 
-  baseflow <- rep( discharge[1], n )
+  q90 <- quantile( discharge, 0.1 )
+  C90 <- quantile( C, 0.90 )
+  C_baseflow <- min( median( C[ discharge <= q90 ] ), C90 )
 
-  for ( i in 2:n) {
-    baseflow[i] <-   ( ( ( 1. - BFImax ) * alpha * baseflow[i-1] )
-                      + ( BFImax * ( 1. - alpha ) * discharge[i] ) ) / ( 1. - alpha * BFImax )
-  }
-
-  #bf[i] <-(((1 - BFI)* a* bf[i-1]) + ((1-a)* BFI* discharge [i])) /(1- a*BFI)
+  baseflow <- discharge * ( C - C_runoff ) / ( C_baseflow - C_runoff )
 
   baseflow <- pmin( baseflow, discharge )
   baseflow <- pmax( baseflow, 0.0 )
@@ -58,6 +58,6 @@ bf_eckhardt_filter <- function(date, discharge, BFImax, alpha, STAID="Unknown") 
   if(!is.null(STAID))
     attr(retval, "STAID") <- STAID
   attr(retval, "type") <- "part"
-  class(retval) <- c("Eckhardt", "data.frame")
+  class(retval) <- c("CMB", "data.frame")
   return(retval)
 }
