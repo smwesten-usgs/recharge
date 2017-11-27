@@ -3,14 +3,10 @@
 #' Extract baseflow from a daily streamflow record using the method described by
 #'Sloto and Crouse (1996).
 #'
-#' @param Flow the daily streamflow to be separated missing values are not permitted
-#'within the time specified by \code{Start} and \code{end}.
-#' @param Dates the date for each \code{x}, should be of class "Date." Missing values
+#' @param date vector of dates for each \code{x}, should be of class "Date." Missing values
 #'are not permitted.
-#' @param Start the start date for the analysis, can be either a character string or
-#'class "Date."
-#' @param End the end date for the analysis, can be either a character string or
-#'class "Date."
+#' @param discharge the daily streamflow to be separated missing values are not permitted
+#'within the time specified by \code{Start} and \code{end}.
 #' @param da the drainage area of the basin in square miles.
 #' @param select a character string indicating which method to use for the
 #'baseflow in the output dataset. Must be one of "sliding," "local minimum,"

@@ -11,14 +11,9 @@
 #'but at some risk of rejecting acceptable recessions. The default value of 0.1, seems
 #'to be provide good balance of rejection for poor fits and acceptance of good fits.
 #'
-#' @param Flow the streamflow data to be analyzed. Missing values are not permitted
-#'within the time specified by \code{Start} and \code{end}.
-#' @param Dates the date for each \code{x}, should be of class "Date." Missing values
+#' @param date vector of dates for each \code{x}, should be of class "Date." Missing values
 #'are not permitted.
-#' @param Start the start date for the analysis, can be either a character string or
-#'class "Date."
-#' @param End the end date for the analysis, can be either a character string or
-#'class "Date."
+#' @param discharge the streamflow data to be analyzed. Missing values are not permitted.
 #' @param by the months to subselect for recessions.
 #' @param min.duration the minimum duration for a recession to be selected.
 #' @param max.duration the maximum duration for a recession to be selected.
@@ -37,7 +32,7 @@
 #'with(ChoptankFlow, recess(Flow, datetime, STAID="0191000"))
 #'}
 #' @export
-recess <- function(Flow, Dates, Start=NULL, End=NULL, by=NULL,
+recess <- function(date, discharge, by=NULL,
                    min.duration=10, max.duration=300,
 									 check.srmse=0.1, STAID="Unknown") {
   ## Coding history:
@@ -175,3 +170,17 @@ recess <- function(Flow, Dates, Start=NULL, End=NULL, by=NULL,
   oldClass(retval) <- "recess"
   return(retval)
 }
+
+na2miss <- function( x, to = -99999 ) {
+
+  if( inherits(x,'factor')) {
+    levs <- c(levels(x), as.character(to))
+    x <- as.vector(x)
+    x[is.na(x)] <- to
+    return( factor(x, levels=levs))
+  }
+
+  x[ is.na(x) ] <- to
+  return(x)
+}
+

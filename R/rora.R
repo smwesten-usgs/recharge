@@ -51,7 +51,7 @@
 #'
 #' @useDynLib recharge roraf
 #' @export
-rora <- function(date, discharge, da, recessIndex,
+bf_rora <- function(date, discharge, da, recessIndex,
                  minimum_discharge=0.01, incAnteRec=0, STAID=NULL) {
 
   discharge <- discharge[ !is.na( discharge ) ]
@@ -118,4 +118,17 @@ rora <- function(date, discharge, da, recessIndex,
     retval$STAID <- STAID
   oldClass(retval) <- "rora"
   return(retval)
+}
+
+na2miss <- function( x, to = -99999 ) {
+
+  if( inherits(x,'factor')) {
+    levs <- c(levels(x), as.character(to))
+    x <- as.vector(x)
+    x[is.na(x)] <- to
+    return( factor(x, levels=levs))
+  }
+
+  x[ is.na(x) ] <- to
+  return(x)
 }

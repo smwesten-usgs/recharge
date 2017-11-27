@@ -4,22 +4,14 @@
 \alias{recess}
 \title{Recessions}
 \usage{
-recess(Flow, Dates, Start = NULL, End = NULL, by = NULL,
-  min.duration = 10, max.duration = 300, check.srmse = 0.1,
-  STAID = "Unknown")
+recess(date, discharge, by = NULL, min.duration = 10, max.duration = 300,
+  check.srmse = 0.1, STAID = "Unknown")
 }
 \arguments{
-\item{Flow}{the streamflow data to be analyzed. Missing values are not permitted
-within the time specified by \code{Start} and \code{end}.}
-
-\item{Dates}{the date for each \code{x}, should be of class "Date." Missing values
+\item{date}{vector of dates for each \code{x}, should be of class "Date." Missing values
 are not permitted.}
 
-\item{Start}{the start date for the analysis, can be either a character string or
-class "Date."}
-
-\item{End}{the end date for the analysis, can be either a character string or
-class "Date."}
+\item{discharge}{the streamflow data to be analyzed. Missing values are not permitted.}
 
 \item{by}{the months to subselect for recessions.}
 
