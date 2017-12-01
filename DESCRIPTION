@@ -23,6 +23,7 @@ Collate:
   'recess.R'
   'eventProcessing.R'
   'Eckhardt_digital_filter.R'
+  'single_term_digital_filter.R'
   'chemical_mass_balance.R'
   'cfs_to_recharge.R'
   'plot_flow_conc.R'

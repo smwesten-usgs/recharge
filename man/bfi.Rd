@@ -41,7 +41,7 @@ on the water year.
 
 \dontrun{
 # Process by calendar year as that is the retrieval range
-ChopBFI <- with(ChoptankFlow, bfi(Flow, datetime, by="calendar year",
+ChopBFI <- with(ChoptankFlow, bfi(date, discharge, by="calendar year",
 STAID="01491000"))
 head(ChopBFI, 20)
 }

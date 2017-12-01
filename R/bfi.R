@@ -38,7 +38,7 @@
 #'
 #'\dontrun{
 #'# Process by calendar year as that is the retrieval range
-#'ChopBFI <- with(ChoptankFlow, bfi(Flow, datetime, by="calendar year",
+#'ChopBFI <- with(ChoptankFlow, bfi(date, discharge, by="calendar year",
 #'STAID="01491000"))
 #'head(ChopBFI, 20)
 #'}
@@ -75,9 +75,9 @@ bfi <- function(date, discharge, by="water year", f=0.9, N=5L, STAID="Unknown") 
   }
   DF <-  data.frame(date=date, discharge=discharge)
   ret <- by(DF, year, function(DF) {
-    Jul <- dayno(DF$Dates)
+    Jul <- dayno(DF$date)
     Grp <- cut(Jul, Cut, labels=FALSE)
-    retval <- tapply(DF$Q, Grp, function(x) {
+    retval <- tapply(DF$discharge, Grp, function(x) {
       Min <- min(x)
       Wch <- which(Min == x)[1L]
       return(c(Min, Wch))
@@ -111,19 +111,19 @@ bfi <- function(date, discharge, by="water year", f=0.9, N=5L, STAID="Unknown") 
     }
   }
   TPdat <- ret[TP,]
-  BaseQ <- rep(NA, length=length(Flow))
+  BaseQ <- rep(NA, length=length(discharge))
   for(i in seq(1L, nrow(TPdat)-1L)) {
     Rng <- seq(TPdat[i, 2L], TPdat[i+1L, 2L])
     if(TPdat[i, 1L] == 0 || TPdat[i+1L, 1L] == 0) { # Use linear interpolation
-      BaseQ[Rng] <- pmin(Flow[Rng], seq(TPdat[i, 1L], TPdat[i+1L, 1L],
+      BaseQ[Rng] <- pmin(discharge[Rng], seq(TPdat[i, 1L], TPdat[i+1L, 1L],
                                           length.out=TPdat[i+1L, 2L] - TPdat[i, 2L]+1L))
     } else
-      BaseQ[Rng] <- pmin(Flow[Rng], exp(seq(log(TPdat[i, 1L]), log(TPdat[i+1L, 1L]),
+      BaseQ[Rng] <- pmin(discharge[Rng], exp(seq(log(TPdat[i, 1L]), log(TPdat[i+1L, 1L]),
                                             length.out=TPdat[i+1L, 2L] - TPdat[i, 2L]+1L)))
   }
-  TurnPt <- rep(" ", length(Flow))
+  TurnPt <- rep(" ", length(discharge))
   TurnPt[TPdat[,2]] <- "*"
-  retval <- data.frame(Dates=Dates, BaseQ=BaseQ, Flow=Flow, TurnPt=TurnPt)
+  retval <- data.frame(date=date, baseflow=round(BaseQ, 3L), discharge=discharge, turning_points=TurnPt)
   if(!is.null(STAID))
     attr(retval, "STAID") <- STAID
   attr(retval, "type") <- "bfi"
@@ -131,3 +131,19 @@ bfi <- function(date, discharge, by="water year", f=0.9, N=5L, STAID="Unknown") 
   return(retval)
 }
 
+waterYear <- function(x, numeric=FALSE) {
+  ## Coding history:
+  ##    2005Jul14 DLLorenz Initial dated verion
+  ##    2010Feb17 DLLorenz Added option to return numerics
+  ##    2011Jun07 DLLorenz Conversion to R
+  ##    2012Aug11 DLLorenz Integer fixes
+  ##    2013Feb15 DLLorenz Prep for gitHub
+  ##
+  yr <- lubridate::year( x )
+  mn <- lubridate::month( x )
+  ## adjust for water year
+  yr <- yr + ifelse(mn < 10L, 0L, 1L)
+
+  return(yr)
+
+}
