@@ -7,14 +7,14 @@
 #'@param baseflow the mean daily baseflow for the corresponding date.
 #'@param da the drainage area of the basin in square miles.
 #'@return A data frame containing the following fields:
-#'    date date corresponding to the baseflow value
-#'    baseflow baseflow value in cfs
-#'    month
-#'    day
-#'    year
-#'    wy
-#'    total_daily_recharge_ft3
-#'    recharge_in
+#'    \item{date}{date corresponding to the baseflow value}
+#'    \item{baseflow}{baseflow value in cfs}
+#'    \item{month}{month of year (1-12) of the basteflow value}
+#'    \item{day}{day of month (1-31) associated with baseflow value}
+#'    \item{year}{calendar year associated with the baseflow value}
+#'    \item{wy}{water year associated with the baseflow value}
+#'    \item{total_daily_recharge_ft3}{daily recharge in cubic feet}
+#'    \item{recharge_in}{daily recharge over basin area, in inches}
 #'@export
 cfs_to_recharge <- function( date, baseflow, da ) {
 
